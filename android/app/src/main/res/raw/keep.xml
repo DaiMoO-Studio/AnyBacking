@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- release 的資源精簡：err_* 由 ErrorText 依伺服器錯誤代碼動態查（getIdentifier），不能被當成沒用到而拿掉 -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@string/err_*" />

@@ -1,0 +1,115 @@
+# 固定專案名稱：容器、volume 都叫 anybacking-*，不受本機資料夾名稱影響
+name: anybacking
+
+x-common: &common
+  build: .
+  image: anybacking:latest
+  volumes:
+    - ./data/output:/data/output
+    - ./data/models:/data/models
+    - ./input:/data/input
+  environment:
+    - NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
+    # - WHISPER_MODEL=large-v3
+    # - SEP_MODEL=model_bs_roformer_ep_317_sdr_12.9755.ckpt   （命令列；App 的工作機見下面 x-web 的 SEP_MODEL）
+
+x-gpu: &gpu
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]
+
+# 後端服務共用的設定；密碼、金鑰放在 .env（不進 git，見 .env.example）
+x-web: &web
+  image: anybacking:latest
+  restart: unless-stopped   # 電腦重開機、Docker 啟動後自動跑起來
+  environment:
+    - DATABASE_URL=postgresql://anybacking:${POSTGRES_PASSWORD:?請在 .env 設定 POSTGRES_PASSWORD}@db:5432/anybacking
+    - STORAGE_DIR=/data/storage
+    - MEDIA_SECRET=${MEDIA_SECRET:?請在 .env 設定 MEDIA_SECRET}
+    - MODEL_DIR=/data/models
+    - XDG_CACHE_HOME=/data/models/cache
+    - HF_HOME=/data/models/cache/huggingface
+    - TORCH_HOME=/data/models/cache/torch
+    - NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
+    - WORKER_NAME=${WORKER_NAME:-worker}   # 固定名稱：容器重建後才找得回自己沒做完的工作
+    - TZ=${TZ:-UTC}                        # 日誌、auth.py list 的時區（例：台北用 POSIX 寫法 CST-8，不需要 tzdata）
+    # 工作機的去人聲模型（009）：Kim（可商用、一首約 34 秒）；viperx（model_bs_roformer_ep_317_sdr_12.9755.ckpt）數字上略乾淨但慢 3 倍多，
+    # 開發者試聽 A/B 後決定用 Kim（2026-10-26）
+    - SEP_MODEL=vocals_mel_band_roformer.ckpt
+    - URL_IMPORT=${URL_IMPORT:-1}     # 018：貼網址（yt-dlp），0＝關閉
+    - WEB_LYRICS=${WEB_LYRICS:-1}     # 018：上網找歌詞，0＝關閉
+    - SEARXNG_URL=http://searxng:8080   # 017：沒有同步歌詞時上網搜尋歌詞
+  volumes:
+    - ./data/storage:/data/storage
+    - ./data/models:/data/models
+  depends_on:
+    - db
+    - searxng
+
+services:
+  # 命令列，GPU 版：docker compose run --rm cli "網址"
+  cli:
+    <<: [*common, *gpu]
+    profiles: [cli]   # docker compose up 只啟動後端服務；run 指名時照常可用
+
+  # 命令列，CPU 版（沒有 NVIDIA 顯示卡時）：docker compose run --rm cli-cpu "網址"
+  cli-cpu:
+    <<: *common
+    profiles: [cpu]
+
+  # ---------- 後端服務：docker compose up -d ----------
+  db:
+    image: postgres:16.4-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=anybacking
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?請在 .env 設定 POSTGRES_PASSWORD}
+      - POSTGRES_DB=anybacking
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # 具名 volume：Windows 資料夾掛給 Postgres 會有權限問題
+
+  api:
+    <<: *web
+    build: .   # docker compose build 會建置共用的 anybacking 映像（cli 在 cli profile，不會被建置）
+    entrypoint: ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000", "--app-dir", "/app"]
+    ports:
+      # 手機在同一個區網連 http://<這台電腦的 IP>:8000；只想本機或經反向代理時設 API_BIND=127.0.0.1
+      - "${API_BIND:-0.0.0.0}:${API_PORT:-8000}:8000"
+
+  worker:
+    <<: [*web, *gpu]
+    entrypoint: ["python", "/app/worker.py"]
+
+  # 017：上網找歌詞的搜尋引擎（自架、免申請；只在內部網路）
+  searxng:
+    image: searxng/searxng:2026.10.29-cff884f98
+    restart: unless-stopped
+    environment:
+      - SEARXNG_SECRET=${SEARXNG_SECRET:?請在 .env 設定 SEARXNG_SECRET}
+    volumes:
+      - ./deploy/searxng/settings.yml:/etc/searxng/settings.yml:ro
+
+  # 每天 03:30 備份資料庫與歌曲檔，保留 14 份（deploy/backup/；位置在 .env 的 BACKUP_DIR）
+  backup:
+    image: postgres:16.4-alpine   # 有 pg_dump、tar；不掛 docker.sock
+    restart: unless-stopped
+    entrypoint: ["sh", "/scripts/loop.sh"]
+    environment:
+      - PGHOST=db
+      - PGUSER=anybacking
+      - PGDATABASE=anybacking
+      - PGPASSWORD=${POSTGRES_PASSWORD:?請在 .env 設定 POSTGRES_PASSWORD}
+      - TZ=${TZ:-UTC}
+    volumes:
+      - ./deploy/backup:/scripts:ro
+      - ./data/storage:/data/storage:ro
+      - ${BACKUP_DIR:-./data/backups}:/backups
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

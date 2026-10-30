@@ -1,0 +1,6 @@
+# 容器內執行的腳本與設定一律 LF（Windows 上 clone 也不能變成 CRLF）
+*.sh text eol=lf
+*.caddy text eol=lf
+*.py text eol=lf
+Dockerfile text eol=lf
+*.yml text eol=lf

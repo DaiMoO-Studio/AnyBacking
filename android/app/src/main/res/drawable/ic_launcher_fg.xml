@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <!-- 外圈 40 根頻譜（霓虹粉→紫→青，同播放鍵的環狀頻譜）＋置中的麥克風；光暈用加粗半透明的同一條線（向量圖沒有模糊） -->
+    <path android:pathData="M54.00,30.00L54.00,27.80M57.75,30.30L58.81,23.65M61.42,31.17L62.32,28.41M64.90,32.62L65.94,30.57M68.11,34.58L70.26,31.62M70.97,37.03L75.06,32.94M73.42,39.89L78.37,36.29M75.38,43.10L79.58,40.97M76.83,46.58L80.98,45.24M77.70,50.25L79.97,49.89M78.00,54.00L83.09,54.00M77.70,57.75L80.06,58.13M76.83,61.42L83.92,63.72M75.38,64.90L78.26,66.36M73.42,68.11L76.87,70.62M70.97,70.97L72.70,72.70M68.11,73.42L70.85,77.19M64.90,75.38L67.47,80.43M61.42,76.83L63.06,81.89M57.75,77.70L58.68,83.55M54.00,78.00L54.00,80.91M50.25,77.70L49.79,80.56M46.58,76.83L45.82,79.16M43.10,75.38L39.87,81.73M39.89,73.42L37.99,76.04M37.03,70.97L32.73,75.27M34.58,68.11L32.11,69.90M32.62,64.90L29.99,66.23M31.17,61.42L26.85,62.82M30.30,57.75L25.03,58.59M30.00,54.00L23.33,54.00M30.30,50.25L26.60,49.66M31.17,46.58L27.55,45.41M32.62,43.10L30.54,42.05M34.58,39.89L29.91,36.50M37.03,37.03L34.90,34.90M39.89,34.58L35.70,28.81M43.10,32.62L41.37,29.20M46.58,31.17L45.52,27.91M50.25,30.30L49.77,27.27" android:strokeWidth="3.4" android:strokeLineCap="round" android:strokeAlpha="0.28">
+        <aapt:attr name="android:strokeColor">
+            <gradient android:type="linear" android:startX="24" android:startY="24" android:endX="84" android:endY="84">
+                <item android:offset="0" android:color="#FFFF4FD8" />
+                <item android:offset="0.55" android:color="#FF8B5CFF" />
+                <item android:offset="1" android:color="#FF3DF5C8" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:pathData="M54.00,30.00L54.00,27.80M57.75,30.30L58.81,23.65M61.42,31.17L62.32,28.41M64.90,32.62L65.94,30.57M68.11,34.58L70.26,31.62M70.97,37.03L75.06,32.94M73.42,39.89L78.37,36.29M75.38,43.10L79.58,40.97M76.83,46.58L80.98,45.24M77.70,50.25L79.97,49.89M78.00,54.00L83.09,54.00M77.70,57.75L80.06,58.13M76.83,61.42L83.92,63.72M75.38,64.90L78.26,66.36M73.42,68.11L76.87,70.62M70.97,70.97L72.70,72.70M68.11,73.42L70.85,77.19M64.90,75.38L67.47,80.43M61.42,76.83L63.06,81.89M57.75,77.70L58.68,83.55M54.00,78.00L54.00,80.91M50.25,77.70L49.79,80.56M46.58,76.83L45.82,79.16M43.10,75.38L39.87,81.73M39.89,73.42L37.99,76.04M37.03,70.97L32.73,75.27M34.58,68.11L32.11,69.90M32.62,64.90L29.99,66.23M31.17,61.42L26.85,62.82M30.30,57.75L25.03,58.59M30.00,54.00L23.33,54.00M30.30,50.25L26.60,49.66M31.17,46.58L27.55,45.41M32.62,43.10L30.54,42.05M34.58,39.89L29.91,36.50M37.03,37.03L34.90,34.90M39.89,34.58L35.70,28.81M43.10,32.62L41.37,29.20M46.58,31.17L45.52,27.91M50.25,30.30L49.77,27.27" android:strokeWidth="1.6" android:strokeLineCap="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient android:type="linear" android:startX="24" android:startY="24" android:endX="84" android:endY="84">
+                <item android:offset="0" android:color="#FFFF4FD8" />
+                <item android:offset="0.55" android:color="#FF8B5CFF" />
+                <item android:offset="1" android:color="#FF3DF5C8" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <group android:translateY="4.5">
+        <path android:pathData="M47,38a7,7 0,0 1,14 0v10a7,7 0,0 1,-14 0zM41,46a13,13 0,0 0,26 0M54,59V68M47,68H61" android:strokeColor="#FFFF4FD8" android:strokeWidth="5"
+            android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0.4" />
+        <path android:pathData="M47,38a7,7 0,0 1,14 0v10a7,7 0,0 1,-14 0z" android:fillColor="#FFFFF1FC" />
+        <path android:pathData="M41,46a13,13 0,0 0,26 0M54,59V68M47,68H61" android:strokeColor="#FFFFF1FC" android:strokeWidth="2.4"
+            android:strokeLineCap="round" android:strokeLineJoin="round" />
+        <path android:pathData="M50,38H58M50,42H58M50,46H58" android:strokeColor="#FFB57BFF" android:strokeWidth="1"
+            android:strokeLineCap="round" android:strokeAlpha="0.7" />
+    </group>
+</vector>

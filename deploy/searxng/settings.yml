@@ -1,0 +1,21 @@
+# 017：歌詞搜尋用的自架 SearXNG（只給 compose 內部的 api／worker 用，不開主機 port）
+use_default_settings: true
+server:
+  limiter: false        # 只有我們自己的服務會查
+  image_proxy: false
+  public_instance: false
+search:
+  formats: [html, json]
+  safe_search: 0
+# 預設只開 DuckDuckGo、Brave、Google CSE；前兩個很快就回 CAPTCHA／限流（017 實測），多開幾個讓結果穩定
+engines:
+  - name: google
+    disabled: false
+  - name: bing
+    disabled: false
+  - name: yahoo
+    disabled: false
+  - name: startpage
+    disabled: false
+  - name: mojeek
+    disabled: false

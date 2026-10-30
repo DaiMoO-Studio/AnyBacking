@@ -1,0 +1,10 @@
+yt-dlp[default]
+audio-separator[gpu]
+stable-ts
+opencc-python-reimplemented
+
+# 網頁服務（API、工作機）
+fastapi
+uvicorn
+python-multipart
+psycopg[binary]

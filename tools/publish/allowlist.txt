@@ -1,0 +1,27 @@
+# 018：匯出到公開 repo 的檔案（git ls-files 的路徑，bash glob；! 開頭＝排除，後面的規則優先）
+app/*
+android/*
+tools/icon/*
+tools/check_messages.py
+tools/publish/*
+deploy/backup/*
+deploy/searxng/*
+input/.gitkeep
+Dockerfile
+docker-compose.yml
+requirements.txt
+requirements.lock.txt
+.env.example
+.gitignore
+.gitattributes
+.dockerignore
+README.md
+README.zh-TW.md
+LICENSE
+THIRD_PARTY.md
+assets/*
+!android/app/debug.keystore
+!android/server.properties
+!android/release.properties
+!android/keys/*
+!tools/publish/forbidden.txt

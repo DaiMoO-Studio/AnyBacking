@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 018 自架：允許 http（區網、Tailscale 的伺服器常沒有憑證）；只准私人位址由 App 的 ServerConfig.allowed 把關 -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

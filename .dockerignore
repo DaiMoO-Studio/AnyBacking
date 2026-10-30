@@ -1,0 +1,4 @@
+data/
+input/
+**/__pycache__/
+*.zip

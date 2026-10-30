@@ -1,0 +1,13 @@
+/data/
+input/*
+!input/.gitkeep
+__pycache__/
+.env
+android/.gradle/
+android/**/build/
+android/local.properties
+tools/eval/_asr_cache/
+android/release.properties
+android/keys/
+android/dist/
+android/server.properties
