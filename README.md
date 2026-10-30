@@ -1,6 +1,6 @@
 # AnyBacking（伴唱工坊）
 
-**Turn your own songs into sing-along backing tracks, on your own computer.**
+**Turn music into sing-along backing tracks, on your own computer.**
 Upload a song (or paste a video link) → AI removes the vocals, finds and times the lyrics → sing along on your Android phone with scrolling lyrics.
 
 [中文說明 README.zh-TW.md](README.zh-TW.md)
