@@ -289,10 +289,19 @@ def find_lyrics(queries: list, duration: float, max_diff: float = 15.0, must_mat
     return _tidy(found) if found else None
 
 
+INCOMPLETE_END = 0.6   # 歌曲庫裡最後一句的位置最早是 0.74（間奏很長的結尾），只寫前半首的《普通朋友》是 0.47
+
+
+def lrc_complete(text: str, duration: float) -> bool:
+    """同步歌詞最後一句在全曲 INCOMPLETE_END 之前就結束 → 多半只寫了前半首（重複的副歌用「＊」「＃」帶過、沒展開，《普通朋友》）。"""
+    ends = [t for t, txt in parse_lrc(text) if txt]
+    return not duration or not ends or ends[-1] >= duration * INCOMPLETE_END
+
+
 def lrclib_lyrics(queries: list, duration: float, max_diff: float = 15.0, must_match: str = None, artist: str = None):
     """
     App 處理流程用（017）：回傳 (sure, cands)。
-    sure：同歌手的 LRCLIB 同步歌詞（可以直接用）；cands：其他都當候選（不分歌手的同步歌詞、純文字歌詞），交給 pick 和實際唱的內容比對——
+    sure：同歌手的 LRCLIB 同步歌詞（可以直接用）；只寫了前半首的（lrc_complete）不算；cands：其他都當候選（不分歌手的同步歌詞、純文字歌詞），交給 pick 和實際唱的內容比對——
     只看歌名時同步歌詞也可能是同名別人的歌（《我相信》吳莫愁版）。都已轉正體、清掉標題行。
     """
     fetch = _Fetch()
@@ -315,7 +324,7 @@ def lrclib_lyrics(queries: list, duration: float, max_diff: float = 15.0, must_m
             except Exception as e:
                 log(f"  查詢失敗：{e}")
                 continue
-            if synced and who:
+            if synced and who and lrc_complete(synced["text"], duration):
                 return _tidy(synced), []
             add(synced)
             add(plain)
@@ -353,12 +362,13 @@ def web_candidates(queries: list) -> list:
 
 
 _EDITOR_RE = re.compile(r"editor\b|\blrc\b|歌詞(製作|編輯|整理)|～～", re.I)
+_SECTION_RE = re.compile(r"\[[^\]\d:]{1,20}( \d)?\]$")
 
 
 def _web_junk(line: str) -> bool:
-    """網頁歌詞裡的製作名單（LRC 常帶時間：「[00:10.00]作詞：天天」）與「Editor by …」。"""
+    """網頁歌詞裡的製作名單（LRC 常帶時間：「[00:10.00]作詞：天天」）與「Editor by …」；Genius 的段落標籤「[主歌 1]」「[Chorus]」。"""
     body = _WORD_TS_RE.sub("", _TS_RE.sub("", line)).strip()
-    return bool(body) and (is_credit(body) or bool(_EDITOR_RE.search(body)))
+    return bool(body) and (is_credit(body) or bool(_EDITOR_RE.search(body)) or bool(_SECTION_RE.match(body)))
 
 
 _HEADER_RE = re.compile(r"[:：《》【】]|歌詞|歌词|lyrics|\s[-–—]\s|^[\(（].*[\)）]$", re.I)

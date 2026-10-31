@@ -17,6 +17,7 @@ from pathlib import Path
 import align
 import lyrics
 import media
+import repeats
 from common import Line, detect_lang, load_lines, log, media_duration, save_lines, save_waveform
 from cli import COMMERCIAL_SEP_MODELS, DEFAULT_SEP_MODEL
 from messages import UserError
@@ -221,6 +222,7 @@ class Engine:
                     log(f"歌詞照時間對齊有 {unsure:.0%} 句是推估的，可能是別的版本，改用純文字對齊")
                     plain = "\n".join(l.text for l in lines)
                     lines, lang = self._align_text(vocals, workdir, duration, plain)
+                lines, _ = repeats.expand(self.whisper, vocals, lines, lang)   # 019：只寫一次副歌的歌詞，補上後面重複唱的
                 lyrics.write_lrc(lines, lrc, {})
                 return lines, lang, found["source"]
             lines, lang = (heard_lines, lang) if heard_lines is not None else align.transcribe(self.whisper, vocals)
@@ -229,6 +231,7 @@ class Engine:
             lyrics.write_lrc(lines, lrc, {})
             return lines, lang, "asr"
         lines, lang = self._align_text(vocals, workdir, duration, text)
+        lines, _ = repeats.expand(self.whisper, vocals, lines, lang)
         lyrics.write_lrc(lines, lrc, {})
         return lines, lang, "user"
 
